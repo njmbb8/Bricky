@@ -1,0 +1,34 @@
+#game {
+    background-color: black;
+    height: 400px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    width: 400px;
+  }
+
+#paddle{
+    background-color: green;
+    position: absolute;
+    height: 20px;
+    width: 40px;
+    bottom: 0px;
+    left: 180px;
+  }
+
+#brickContainer{
+    background-color: hotpink;
+    height: 133px;
+  }
+
+#projectile{
+    height: 5px;
+    width: 5px;
+    background-color: white;
+    position: absolute;
+}
+
+.brick{
+    height: 20px;
+    width: 40px;
+}
