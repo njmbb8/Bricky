@@ -19,6 +19,8 @@
 #brickContainer{
     background-color: hotpink;
     height: 133px;
+    display: grid;
+    grid-template-columns: repeat(10, auto);
   }
 
 #projectile{
