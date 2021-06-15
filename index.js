@@ -73,7 +73,7 @@ class paddle{
         }
     }
     moveUp(){
-        if((this.getYCoordinate() + this.height) < document.getElementById('game').offsetHeight){
+        if((this.getYCoordinate() + this.height) < (document.getElementById('game').offsetHeight - document.getElementById('brickContainer').offsetHeight)){
             this.setYCoordinate(this.getYCoordinate() + 10);
         }
     }
