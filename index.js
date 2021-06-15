@@ -73,6 +73,7 @@ class paddle{
         }
     }
     moveUp(){
+        //here we subtract the height of the brick container from the height of the game to get our ne upper limit as the bottom of the brick container
         if((this.getYCoordinate() + this.height) < (document.getElementById('game').offsetHeight - document.getElementById('brickContainer').offsetHeight)){
             this.setYCoordinate(this.getYCoordinate() + 10);
         }
