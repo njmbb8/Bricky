@@ -36,10 +36,12 @@ function bindKeys(paddle) {
     })
 }
 
-class paddle{
-    node = document.getElementById('paddle');//DOM node that refers to the paddle
-    height = this.node.offsetHeight;//height of paddle
-    width = this.node.offsetWidth;//width of paddle. these are useful to calcuate collisions between the paddle and other objects
+class baseElement{
+    constructor(id){
+        this.node = document.getElementById(id);
+        this.height = this.node.offsetHeight;//height of paddle
+        this.width = this.node.offsetWidth;//width of paddle. these are useful to calcuate collisions between the paddle and other objects
+    }
     getXCoordinate(){
       //returns the "left" css property after all css has been computed, strips the px on the end and converts the resulting number from string to int 
         return parseInt(window.getComputedStyle(this.node)['left'].replace('px', ''));
@@ -53,6 +55,12 @@ class paddle{
     }
     setYCoordinate(Y){
         this.node.style.bottom = Y + 'px';
+    }
+}
+
+class paddle extends baseElement{
+    constructor(id){
+        super(id);
     }
   /*The following methods check to see if the paddle has hit a boundary
     and if not, will then add or subtract 10 to either the x or y coordinate
@@ -80,25 +88,14 @@ class paddle{
     }
 }
 
-class projectile{
-    node = document.getElementById('projectile');
-    height = this.node.offsetHeight;
-    width = this.node.offsetWidth;
-    xVelocity = 1; //velocity here is measured in units of pixels per update
-    yVelocity = -1; //Every time the screen updates, the pixel will move once by the amount specified by the velocity
-
-    getXCoordinate(){
-        return parseInt(window.getComputedStyle(this.node)['left'].replace('px', ''));
+class projectile extends baseElement{
+    constructor(id){
+        super(id);
     }
-    setXCoordinate(X){
-        this.node.style.left = `${X}px`;
-    }
-    getYCoordinate(){
-        return parseInt(window.getComputedStyle(this.node)['bottom'].replace('px', ''));
-    }
-    setYCoordinate(Y){
-        this.node.style.bottom = `${Y}px`;
-    }
+    /*1 and -1 are chosen here to give the ball an initial trajectory of 45 degrees
+        moving in the direction of the initial starting location of the paddle*/
+    xVelocity = 1;
+    yVelocity = -1;
     move(){ //this method takes the current position, adds the velocity to them and sets that number as the new coordinate
         this.setXCoordinate(this.getXCoordinate() + this.xVelocity);
         this.setYCoordinate(this.getYCoordinate() + this.yVelocity);
@@ -109,6 +106,6 @@ class projectile{
     }
 }
 
-const gamePaddle = new paddle(); //instantiate a variable as a new instance of paddle
+const gamePaddle = new paddle('paddle'); //instantiate a variable as a new instance of paddle
 generateBricks(); //generate the bricks
 bindKeys(gamePaddle); //establish controls
