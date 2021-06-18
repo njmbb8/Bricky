@@ -80,6 +80,35 @@ class paddle{
     }
 }
 
+class projectile{
+    node = document.getElementById('projectile');
+    height = this.node.offsetHeight;
+    width = this.node.offsetWidth;
+    xVelocity = 1; //velocity here is measured in units of pixels per update
+    yVelocity = -1; //Every time the screen updates, the pixel will move once by the amount specified by the velocity
+
+    getXCoordinate(){
+        return parseInt(window.getComputedStyle(this.node)['left'].replace('px', ''));
+    }
+    setXCoordinate(X){
+        this.node.style.left = `${X}px`;
+    }
+    getYCoordinate(){
+        return parseInt(window.getComputedStyle(this.node)['bottom'].replace('px', ''));
+    }
+    setYCoordinate(Y){
+        this.node.style.bottom = `${Y}px`;
+    }
+    move(){ //this method takes the current position, adds the velocity to them and sets that number as the new coordinate
+        this.setXCoordinate(this.getXCoordinate() + this.xVelocity);
+        this.setYCoordinate(this.getYCoordinate() + this.yVelocity);
+    }
+    changeVelocity(x, y){
+        this.xVelocity = x;
+        this.yVelocity = y;
+    }
+}
+
 const gamePaddle = new paddle(); //instantiate a variable as a new instance of paddle
 generateBricks(); //generate the bricks
 bindKeys(gamePaddle); //establish controls
