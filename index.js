@@ -86,20 +86,38 @@ class game extends baseElement{
         this.projectile = new projectile('projectile');
         this.generateBricks();
         this.bindKeys(this.paddle);
+        this.brickArray = this.generateBricks();
     }
     
     generateBricks(){
         const numberOfBricks = 60; //6 bricks can fit in each column 10 bricks in each row
-        let brickContainer = document.getElementById("brickContainer"); //store the #brickcontainer element in a variable
-        for( let i = 0; i < numberOfBricks; i++){
-            let brick = document.createElement('div'); //create a div element and assign it to a variable
+        const brickContainer = document.getElementById("brickContainer"); //store the #brickcontainer element in a variable
+        const brickArray = ['']; //the array we will be storing the bricks in
+        /*for( let i = 0; i < numberOfBricks; i++){
+            let brick = document.createElement('div'); 
             brick.classList.add('brick'); //add the brick class to the element, telling the computer that this is a brick
             let red = Math.floor(Math.random() * 255); //generate random red value
             let blue = Math.floor(Math.random() * 255); //generate random blue value
             let green = Math.floor(Math.random() * 255); //generate random green value
             brick.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`; //use the previously generated values to set the brick to a random color
             brickContainer.appendChild(brick); //place the brick in the brickContainer which will make it show on screen
+        }*/
+        for( let i = 0; i < 6; i++){ //When this loop completes, we will be on a new row
+            let brickRow = [];
+            for (let j = 0; j < 10; j++) { //When this loop completes we will be in a new column. 6* 10 = 60 which is the amount that we can fit in our brick container
+                let brickNode = document.createElement('div');//create a div element and assign it to a variable
+                brickNode.classList.add('brick');//add the brick class to the element, telling the computer that this is a brick
+                let red = Math.floor(Math.random() * 255); //generate random red value
+                let blue = Math.floor(Math.random() *255); //generate random blue value
+                let green = Math.floor(Math.random() * 255); //generate random green value
+                brickNode.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`; //use the previously generated values to set the brick to a random color
+                brickNode.setAttribute('id', `brick${i + j}`); //give the brick a unique id
+                brickContainer.appendChild(brickNode); //place the brick in the brickContainer which will make it show on screen
+                brickRow[j] = new brick(brickNode.getAttribute('id')); //Add new brick to the array
+            }
+            brickArray[i] = brickRow;
         }
+        return brickArray;
     }
     /*The following function tells the DOM to listen for a key
     to be pressed, and if it is, move our paddle in the co-
