@@ -87,6 +87,7 @@ class game extends baseElement{
         this.generateBricks();
         this.bindKeys(this.paddle);
         this.brickArray = this.generateBricks();
+        this.run();
     }
     
     generateBricks(){
@@ -131,6 +132,15 @@ class game extends baseElement{
                     break;
             }
         })
+    }
+    updateScreen(){
+        this.projectile.move();
+    }
+    run(){
+        let that = this;
+        window.setInterval(function(){
+            return that.updateScreen();
+        }, 17);
     }
 }
 
