@@ -6,7 +6,7 @@ class baseElement{
     }
     getXCoordinate(){
       //returns the "left" css property after all css has been computed, strips the px on the end and converts the resulting number from string to int 
-        return parseInt(window.getComputedStyle(this.node)['left'].replace('px', ''));
+        return this.node.offsetLeft;
     }
     setXCoordinate(X){
       //updates the actual position of the paddle to a new one
@@ -84,7 +84,6 @@ class game extends baseElement{
         super(id);
         this.paddle = new paddle('paddle');
         this.projectile = new projectile('projectile');
-        this.generateBricks();
         this.bindKeys(this.paddle);
         this.brickArray = this.generateBricks();
         this.run();
@@ -102,7 +101,7 @@ class game extends baseElement{
                 let blue = Math.floor(Math.random() *255); //generate random blue value
                 let green = Math.floor(Math.random() * 255); //generate random green value
                 brickNode.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`; //use the previously generated values to set the brick to a random color
-                brickNode.setAttribute('id', `brick${i + j}`); //give the brick a unique id
+                brickNode.setAttribute('id', 'brick' + i + '' + j); //give the brick a unique id
                 brickContainer.appendChild(brickNode); //place the brick in the brickContainer which will make it show on screen
                 brickRow[j] = new brick(brickNode.getAttribute('id')); //Add new brick to the array
             }
@@ -133,8 +132,31 @@ class game extends baseElement{
             }
         })
     }
+    detectCollision(){
+        console.log('here');
+        if(this.projectile.getXCoordinate() < (this.paddle.getXCoordinate() + this.paddle.width) //checks if the projectile is left of the right side of the paddle
+            && this.projectile.getXCoordinate() > this.paddle.getXCoordinate()//checks is the projectile is to the right of the left side of the paddle
+            && this.projectile.getYCoordinate() < (this.paddle.getYCoordinate() + this.paddle.height)//checks that the projectile is below the top of the top of the paddle
+            && this.projectile.getYCoordinate() > this.paddle.getYCoordinate()){//checks that the projectile is above the bottom of the paddle
+                //if all conditions are true, then a collision has been detected and the velocity needs to change
+                this.projectile.changeVelocity(this.projectile.xVelocity, this.projectile.yVelocity * -1);
+            }
+        else if(this.projectile.getYCoordinate() > (this.height - document.getElementById('brickContainer').offsetHeight)){//do not detect brick collision unless projectile is in the brick container
+            let projectileGridX = this.width / this.projectile.getXCoordinate(); //get projectile's x coordinate in terms of columns and rows
+            let projectileGridY = this.height / this.projectile.getYCoordinate(); //get projectile's y coordinate in terms of columns and rows
+            let activeBrick = this.brickArray[Math.floor(projectileGridX)][Math.floor(projectileGridY)];
+            if(this.projectile.getXCoordinate() > activeBrick.getXCoordinate()
+                &&this.projectile.getXCoordinate() < (activeBrick.getXCoordinate() + activeBrick.width)
+                &&this.projectile.getYCoordinate() > activeBrick.getYCoordinate()
+                &&this.projectile.getYCoordinate() <(activeBrick.getYCoordinate() + activeBrick.height)){
+                    this.projectile.changeVelocity(this.projectile.xVelocity * -1, this.projectile.yVelocity);
+                    activeBrick.disappear();
+            }
+        }
+    }
     updateScreen(){
         this.projectile.move();
+        this.detectCollision();
     }
     run(){
         let that = this;
