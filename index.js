@@ -155,11 +155,19 @@ class game extends baseElement{
                 &&this.projectile.getYCoordinate() > activeBrick.getYCoordinate()
                 &&(this.projectile.getYCoordinate() - 266) <(activeBrick.getYCoordinate() + activeBrick.height)){ //detect if the active brick has been collided
                     if(!activeBrick.isDisappeared){ // don't collide with anything that has already been disappeared
-                        this.projectile.changeVelocity(this.projectile.xVelocity * -1, this.projectile.yVelocity); //adjust velocity
+                        this.projectile.changeVelocity(this.projectile.xVelocity * -1, this.projectile.yVelocity * -1); //adjust velocity
                         activeBrick.disappear(); //disappear the brick
                     }
             }
         }
+        else if(this.projectile.getXCoordinate() <= this.getXCoordinate()
+                || this.projectile.getXCoordinate() >= this.getXCoordinate() + this.width){
+                    this.projectile.changeVelocity(this.projectile.xVelocity * -1, this.projectile.xVelocity);
+                }
+        else if(this.projectile.getYCoordinate() <= this.getYCoordinate()
+                || this.projectile.getYCoordinate() >= this.getYCoordinate() + this.height){
+                    this.projectile.changeVelocity(this.projectile.xVelocity, this.projectile.yVelocity * -1);
+                }
     }
     updateScreen(){
         this.projectile.move();
