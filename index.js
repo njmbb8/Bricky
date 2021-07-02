@@ -6,14 +6,14 @@ class baseElement{
     }
     getXCoordinate(){
       //returns the "left" css property after all css has been computed, strips the px on the end and converts the resulting number from string to int 
-        return this.node.offsetLeft;
+        return parseInt(window.getComputedStyle(this.node)['left'].replace('px', ''));
     }
     setXCoordinate(X){
       //updates the actual position of the paddle to a new one
         this.node.style.left = X +'px';
     }
     getYCoordinate(){
-        return parseInt(window.getComputedStyle(this.node)['bottom'].replace('px', ''))
+        return parseInt(window.getComputedStyle(this.node)['bottom'].replace('px', ''));
     }
     setYCoordinate(Y){
         this.node.style.bottom = Y + 'px';
@@ -77,6 +77,12 @@ class brick extends baseElement{
         this.node.style.backgroundColor = 'black';
         this.isDisappeared = true;
     }
+    getXCoordinate(){
+        return this.node.offsetLeft;
+    }
+    getYCoordinate(){
+        return this.node.offsetTop + this.node.offsetHeight;
+    }
 }
 
 class game extends baseElement{
@@ -133,7 +139,6 @@ class game extends baseElement{
         })
     }
     detectCollision(){
-        console.log('here');
         if(this.projectile.getXCoordinate() < (this.paddle.getXCoordinate() + this.paddle.width) //checks if the projectile is left of the right side of the paddle
             && this.projectile.getXCoordinate() > this.paddle.getXCoordinate()//checks is the projectile is to the right of the left side of the paddle
             && this.projectile.getYCoordinate() < (this.paddle.getYCoordinate() + this.paddle.height)//checks that the projectile is below the top of the top of the paddle
@@ -142,15 +147,17 @@ class game extends baseElement{
                 this.projectile.changeVelocity(this.projectile.xVelocity, this.projectile.yVelocity * -1);
             }
         else if(this.projectile.getYCoordinate() > (this.height - document.getElementById('brickContainer').offsetHeight)){//do not detect brick collision unless projectile is in the brick container
-            let projectileGridX = this.width / this.projectile.getXCoordinate(); //get projectile's x coordinate in terms of columns and rows
-            let projectileGridY = this.height / this.projectile.getYCoordinate(); //get projectile's y coordinate in terms of columns and rows
-            let activeBrick = this.brickArray[Math.floor(projectileGridX)][Math.floor(projectileGridY)];
+            let projectileGridX = this.projectile.getXCoordinate() * 10 / this.width; //get projectile's x coordinate in terms of columns and rows
+            let projectileGridY = Math.abs(((this.projectile.getYCoordinate() - 266) * 6 / 133) - 6); //get projectile's y coordinate in terms of columns and rows
+            let activeBrick = this.brickArray[Math.floor(projectileGridY)][Math.floor(projectileGridX)]; //select brick that projectile is colliding with
             if(this.projectile.getXCoordinate() > activeBrick.getXCoordinate()
                 &&this.projectile.getXCoordinate() < (activeBrick.getXCoordinate() + activeBrick.width)
                 &&this.projectile.getYCoordinate() > activeBrick.getYCoordinate()
-                &&this.projectile.getYCoordinate() <(activeBrick.getYCoordinate() + activeBrick.height)){
-                    this.projectile.changeVelocity(this.projectile.xVelocity * -1, this.projectile.yVelocity);
-                    activeBrick.disappear();
+                &&(this.projectile.getYCoordinate() - 266) <(activeBrick.getYCoordinate() + activeBrick.height)){ //detect if the active brick has been collided
+                    if(!activeBrick.isDisappeared){ // don't collide with anything that has already been disappeared
+                        this.projectile.changeVelocity(this.projectile.xVelocity * -1, this.projectile.yVelocity); //adjust velocity
+                        activeBrick.disappear(); //disappear the brick
+                    }
             }
         }
     }
